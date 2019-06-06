@@ -8,6 +8,7 @@ class App extends Component {
     super(props);
     this.state = {
       currentUser: { name: "Bob" },
+      numOfUser: "",
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     this.onInput = this.onInput.bind(this);
@@ -68,6 +69,9 @@ class App extends Component {
         case "incomingNotification":
           this.setState({ messages: [...this.state.messages, JSON.parse(event.data)] })
           break;
+        case "userCount":
+          this.setState({numOfUser: data.length})
+          break;
         default:
           throw new Error("Unknown event type " + data.type);
       }
@@ -79,6 +83,8 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          <span className="counter">{this.state.numOfUser} users online</span>
+
         </nav>
         <MessageList messages={this.state.messages} />
         <ChatBar

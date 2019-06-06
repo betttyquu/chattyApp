@@ -22,14 +22,20 @@ const wss = new SocketServer({ server });
 
 
 wss.broadcast = function broadcast(data) {
-  console.log("heeeerre")
   wss.clients.forEach(function each(client) {
     client.send(data);
     console.log(data);
   });
 }
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  const numOfUser = {
+    length: wss.clients.size,
+    type: "userCount"
+  }
+
+  ws.send(JSON.stringify(numOfUser));
   ws.on('message', function incoming(messageStr) {
     const messageObj = JSON.parse(messageStr);
     switch (messageObj.type) {
