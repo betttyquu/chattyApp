@@ -5,19 +5,24 @@ class MessageList extends Component {
 
     render() {
         const eachMessage = this.props.messages.map((message) => {
-            return <Message 
-            username = {message.username}
-            content = {message.content}
-            key = {message.id} />
+            console.log(message);
+            if (message.type === "incomingMessage") {
+                return <Message
+                    username={message.data.username}
+                    content={message.data.content}
+                    key={message.data.id} />
+            } else {
+                return (
+                    <div className="message system">{message.data.content}</div>
+                )
+            }
         })
-    
+
+
         return (
             <main className="messages">
-                {eachMessage }
+                {eachMessage}
 
-                <div className="message system">
-                    Anonymous1 changed their name to nomnom.
-                </div>
             </main>
 
         )

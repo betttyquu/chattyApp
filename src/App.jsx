@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Bob"},
+      currentUser: { name: "Bob" },
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     this.onInput = this.onInput.bind(this);
@@ -17,27 +17,42 @@ class App extends Component {
 
   onInput(event) {
     if (event.key === 'Enter') {
-      const message = this.newObj(this.state.currentUser.name, event.target.value)
+      const message = this.postMessage(this.state.currentUser.name, event.target.value)
       this.socket.send(JSON.stringify(message));
       event.target.value = "";
     }
   }
 
   handleChange(event) {
-    this.setState({currentUser: {name: event.target.value}});
+    if (event.key === 'Enter') {
+      console.log(this.state);
+      const username = this.postNotification(this.state.currentUser.name, event.target.value);
+      this.socket.send(JSON.stringify(username));
+      this.setState({ currentUser: { name: event.target.value } });
+    }
   }
 
-
-  newObj(username, content) {
+  postMessage(username, content) {
     let post = {
       username: username,
       content: content
     }
     return {
-      type: "post",
+      type: "postMessage",
       data: post
     }
   }
+
+  postNotification(oldUser, newUser) {
+    let usernameUpdate = {
+      content: `${oldUser} has changed their name to ${newUser}`
+    }
+    return {
+      type: "postNotification",
+      data: usernameUpdate
+    }
+  }
+
 
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
@@ -45,8 +60,17 @@ class App extends Component {
       console.log('Connected to server');
     }
     this.socket.onmessage = (event) => {
-      this.setState({messages:[...this.state.messages, JSON.parse(event.data)]})
-
+      const data = JSON.parse(event.data);
+      switch (data.type) {
+        case "incomingMessage":
+          this.setState({ messages: [...this.state.messages, JSON.parse(event.data)] });
+          break;
+        case "incomingNotification":
+          this.setState({ messages: [...this.state.messages, JSON.parse(event.data)] })
+          break;
+        default:
+          throw new Error("Unknown event type " + data.type);
+      }
     }
   }
 
@@ -56,8 +80,8 @@ class App extends Component {
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <MessageList messages = {this.state.messages}/>
-        <ChatBar 
+        <MessageList messages={this.state.messages} />
+        <ChatBar
           onChangeUser={this.handleChange}
           currentUser={this.state.currentUser}
           value={this.state.input}
