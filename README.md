@@ -25,7 +25,7 @@ Chatty is a web applicatoin which allows user to communicate with each other wit
 * react-dom
 * express
 * ws
-* 
+* uuid
 
 ## Getting Started
 
