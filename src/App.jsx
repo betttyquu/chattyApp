@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: { name: "Bob" },
+      currentUser: { name: "Anonymous" },
       numOfUser: "",
       messages: [] // messages coming from the server will be stored here as they arrive
     };
@@ -26,7 +26,6 @@ class App extends Component {
 
   handleChange(event) {
     if (event.key === 'Enter') {
-      console.log(this.state);
       const username = this.postNotification(this.state.currentUser.name, event.target.value);
       this.socket.send(JSON.stringify(username));
       this.setState({ currentUser: { name: event.target.value } });
