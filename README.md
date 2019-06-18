@@ -1,4 +1,4 @@
-#ChattyApp
+# ChattyApp
 
 Chatty is a web applicatoin which allows user to communicate with each other without having to register accounts. Chatty is built with ReactJS, Webpack, Babel and WebSocket for real time updates.
 
